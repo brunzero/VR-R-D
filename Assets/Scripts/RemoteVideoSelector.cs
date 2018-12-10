@@ -31,7 +31,7 @@ public class RemoteVideoSelector : MonoBehaviour {
         //Debug.Log("From timestamp: " + e.data.GetField("data").GetField("timestamp"));
         //StartCoroutine(videoPlayerObject.PlayVideo());
         //Debug.Log("yoooooooooooooooooooo");
-        Debug.Log(e.data.GetField("data").f);
+        //Debug.Log(e.data.GetField("data").f);
         videoPlayerObject.PlayVideoAtTime(e.data.GetField("data").f);
     }
 
