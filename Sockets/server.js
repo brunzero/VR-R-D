@@ -3,6 +3,8 @@ const app = require('express')();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 var socket = require('socket.io');
+var videoPlayer;
+var time = 0;
 
 const server = createServer(app);
 const io = socket(server, {
@@ -15,20 +17,26 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 io.on('connection', function(socket){
+    console.log('CONNECTED!!!!')
 	socket.on('playvideo', (data)=>{
         console.log('Playing Video\nTitle:', data.data.video);
-        var time = 0;
-        var FPS = 60;
-        var interval = 1/FPS;
-        setInterval(()=>{
+        var FPS = data.data.fps;
+        var interval = 1/FPS*1000;
+        videoPlayer = setInterval(()=>{
             time+=interval/1000;
-            io.emit('playvideo', {data: time})
+            io.emit('playvideo', {data: {
+                time: time
+            }});
+            io.emit('getvideostatus', {data: {
+                time: time
+            }});
             console.log(time);
         }, interval);
 		//io.emit('playvideo', { data: data.data});
     });
     socket.on('stopvideo', () => {
         console.log('Stopping Video');
+        clearInterval(videoPlayer);
 		io.emit('stopvideo');
     });
     socket.on('beep', ()=>{

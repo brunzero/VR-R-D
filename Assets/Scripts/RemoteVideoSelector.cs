@@ -32,7 +32,8 @@ public class RemoteVideoSelector : MonoBehaviour {
         //StartCoroutine(videoPlayerObject.PlayVideo());
         //Debug.Log("yoooooooooooooooooooo");
         //Debug.Log(e.data.GetField("data").f);
-        videoPlayerObject.PlayVideoAtTime(e.data.GetField("data").f);
+        videoPlayerObject.PlayVideoAtTime(e.data.GetField("data").GetField("time").f);
+        Debug.Log(e.data.GetField("data").GetField("time").f);
     }
 
     public void StopVideo(SocketIOEvent e) {
