@@ -15,7 +15,7 @@ class App extends Component {
       currenttimeserver: 0,
       currenttimeclient: 0,
       timedifference: 0,
-      userlist: [],
+      userlist: {},
       socketid: 0
     }
   }
@@ -26,23 +26,23 @@ class App extends Component {
         socketid: socket.id
       })
       console.log(this.state.socketid);
-    })
+    });
     socket.on('getvideostatus', (data)=>{
       this.setState({
-        currenttimeserver: data.time
+        userlist: data.userlist,
+        currenttimeserver: data.userlist[socket.id.toString()].time
       })
+      console.log(this.state.userlist);
     });
     socket.on('userconnected', (data)=>{
+      socket.emit('browserconfirm', {id: socket.id});
+    });
+    socket.on('updateuserlist', (data)=>{
       this.setState({
         userlist: data.userlist
       })
       console.log(this.state.userlist);
-      },
-      //ack
-      ()=>{
-        "yo"
-      }
-    )
+    })
   }
 
   pauseVideo(){
@@ -69,22 +69,21 @@ class App extends Component {
         <br/>
         <button onClick={()=>this.playVideo()}>Play</button>
         <button onClick={()=>this.pauseVideo()}>Pause</button>
-        <br/>
-        <label>Current Time On Server: {this.state.currenttimeserver}</label>
-        <br/>
-        <label>Current Time On Client: {this.state.currenttimeclient}</label>
-        <br/>
-        <label>Difference: {this.state.timedifference}</label>
         <br/> <br/>
         <label>Users</label>
-        {this.state.userlist.map((user)=>{
-          if(user)
+        {Object.keys(this.state.userlist).length > 0 && Object.keys(this.state.userlist).map((user)=>{
           return(
           <div key={user}>
-            <label className="user-in-list">
-              {user}
-            </label>
             {(user == this.state.socketid) ? <label> Web Client</label> : <label> Unity Client</label>}
+              <br/>
+            <label className="user-in-list">
+              {this.state.userlist[user].id}
+              <br/>
+            </label>
+            <label className="user-in-list">
+              Time: {this.state.userlist[user].time}
+              <br/>
+            </label>
           </div>
           )
         })}

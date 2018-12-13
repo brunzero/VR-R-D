@@ -42,7 +42,10 @@ public class RemoteVideoSelector : MonoBehaviour {
     }
 
     public void SocketOpened(SocketIOEvent e) {
+        JSONObject j = new JSONObject(JSONObject.Type.OBJECT);
+        j.AddField("id", socket.sid);
         Debug.Log("Socket " + socket.sid + " has been opened"  );
+        socket.Emit("unityconfirm", j);
     }
 
     public void SocketClosed(SocketIOEvent e) {
