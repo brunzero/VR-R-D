@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import io from 'socket.io-client';
 var socket = io('localhost:4567', {
@@ -15,20 +14,35 @@ class App extends Component {
       fps: 60,
       currenttimeserver: 0,
       currenttimeclient: 0,
-      timedifference: 0
+      timedifference: 0,
+      userlist: [],
+      socketid: 0
     }
   }
 
   componentDidMount(){
-    socket.emit('beep');
-    socket.on('boop', ()=>{
-      console.log("boop");
+    socket.on('connect', ()=>{
+      this.setState({
+        socketid: socket.id
+      })
+      console.log(this.state.socketid);
     })
     socket.on('getvideostatus', (data)=>{
       this.setState({
-        currenttimeserver: data.data.time
+        currenttimeserver: data.time
       })
-    })
+    });
+    socket.on('userconnected', (data)=>{
+      this.setState({
+        userlist: data.userlist
+      })
+      console.log(this.state.userlist);
+      },
+      //ack
+      ()=>{
+        "yo"
+      }
+    )
   }
 
   pauseVideo(){
@@ -36,11 +50,10 @@ class App extends Component {
   }
 
   playVideo(){
-    socket.emit('playvideo', {data: {
+    socket.emit('playvideo', {
         video: this.state.videotitle,
         fps: this.state.fps
-      } 
-    });
+      });
   }
 
   render() {
@@ -62,6 +75,19 @@ class App extends Component {
         <label>Current Time On Client: {this.state.currenttimeclient}</label>
         <br/>
         <label>Difference: {this.state.timedifference}</label>
+        <br/> <br/>
+        <label>Users</label>
+        {this.state.userlist.map((user)=>{
+          if(user)
+          return(
+          <div key={user}>
+            <label className="user-in-list">
+              {user}
+            </label>
+            {(user == this.state.socketid) ? <label> Web Client</label> : <label> Unity Client</label>}
+          </div>
+          )
+        })}
       </div>
     );
   }

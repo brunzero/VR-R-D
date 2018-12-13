@@ -32,7 +32,7 @@ public class RemoteVideoSelector : MonoBehaviour {
         //StartCoroutine(videoPlayerObject.PlayVideo());
         //Debug.Log("yoooooooooooooooooooo");
         //Debug.Log(e.data.GetField("data").f);
-        videoPlayerObject.PlayVideoAtTime(e.data.GetField("data").GetField("time").f);
+        videoPlayerObject.PlayVideoAtTime(e.data.GetField("time").f);
         Debug.Log(e.data.GetField("data").GetField("time").f);
     }
 
@@ -42,11 +42,12 @@ public class RemoteVideoSelector : MonoBehaviour {
     }
 
     public void SocketOpened(SocketIOEvent e) {
-        Debug.Log("Socket has been opened: " + e.name + " " + e.data);
+        Debug.Log("Socket " + socket.sid + " has been opened"  );
     }
 
     public void SocketClosed(SocketIOEvent e) {
-        Debug.Log("Socket has been closed: " + e.name + " " + e.data);
+        Debug.Log("Socket " + socket.sid + " has been closed");
+       
     }
 
     public void SocketError(SocketIOEvent e) {
