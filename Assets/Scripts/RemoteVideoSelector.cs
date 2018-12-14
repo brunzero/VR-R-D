@@ -18,7 +18,7 @@ public class RemoteVideoSelector : MonoBehaviour {
         socket.On("close", SocketClosed);
         socket.On("error", SocketError);
         //socket.On("boop", (SocketIOEvent e) => { Debug.Log("boop"); });
-        socket.On("playvideo", PlayVideo);
+        socket.On("playvideounity", PlayVideo);
         socket.On("stopvideo", StopVideo);
 
         //StartCoroutine("BeepBoop");
@@ -32,8 +32,10 @@ public class RemoteVideoSelector : MonoBehaviour {
         //StartCoroutine(videoPlayerObject.PlayVideo());
         //Debug.Log("yoooooooooooooooooooo");
         //Debug.Log(e.data.GetField("data").f);
+        JSONObject time = new JSONObject(JSONObject.Type.OBJECT);
         videoPlayerObject.PlayVideoAtTime(e.data.GetField("time").f);
-        Debug.Log(e.data.GetField("data").GetField("time").f);
+        time.AddField("time", e.data.GetField("time").f);
+        socket.Emit("updatevideotimeunity", time);
     }
 
     public void StopVideo(SocketIOEvent e) {

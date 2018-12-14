@@ -44,21 +44,38 @@ io.on('connection', (socket)=>{
         console.log('Playing Video\nTitle:', data.video);
         var FPS = data.fps;
         var interval = 1/FPS*1000;
-        videoPlayer = setInterval(()=>{
-            time+=interval/1000;
-            userlist[socket.id.toString()].time = time;
-            io.emit('playvideo', {
-                time: time
-            });
-            io.emit('getvideostatus', {
-                userlist: userlist
-            });
-        }, interval);
+        if(!videoPlayer){
+            videoPlayer = setInterval(()=>{
+                time+=interval/1000;
+                userlist[socket.id.toString()].time = time;
+                io.emit('playvideounity', {
+                    time: time
+                });
+                io.emit('getvideostatus', {
+                    userlist: userlist,
+                });
+            }, interval);
+        }
     });
+
+    socket.on('resetvideo', ()=>{
+        time = 0;
+        userlist[socket.id.toString()].time = time;
+        clearInterval(videoPlayer);
+        videoPlayer = false;
+        io.emit('getvideostatus', {
+            userlist: userlist
+        })
+    });
+
+    socket.on('updatevideotimeunity', (data)=>{
+        userlist[socket.id.toString()].time = data.time;
+    })
 
     socket.on('stopvideo', () => {
         console.log('Stopping Video');
         clearInterval(videoPlayer);
+        videoPlayer = false;
 		io.emit('stopvideo');
     });
 

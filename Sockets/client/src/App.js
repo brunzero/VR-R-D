@@ -25,14 +25,11 @@ class App extends Component {
       this.setState({
         socketid: socket.id
       })
-      console.log(this.state.socketid);
     });
     socket.on('getvideostatus', (data)=>{
       this.setState({
         userlist: data.userlist,
-        currenttimeserver: data.userlist[socket.id.toString()].time
       })
-      console.log(this.state.userlist);
     });
     socket.on('userconnected', (data)=>{
       socket.emit('browserconfirm', {id: socket.id});
@@ -41,7 +38,6 @@ class App extends Component {
       this.setState({
         userlist: data.userlist
       })
-      console.log(this.state.userlist);
     })
   }
 
@@ -54,6 +50,10 @@ class App extends Component {
         video: this.state.videotitle,
         fps: this.state.fps
       });
+  }
+
+  resetVideo(){
+    socket.emit('resetvideo');
   }
 
   render() {
@@ -69,6 +69,8 @@ class App extends Component {
         <br/>
         <button onClick={()=>this.playVideo()}>Play</button>
         <button onClick={()=>this.pauseVideo()}>Pause</button>
+        <button onClick={()=>this.resetVideo()}>Reset</button>
+        <br/>
         <br/> <br/>
         <label>Users</label>
         {Object.keys(this.state.userlist).length > 0 && Object.keys(this.state.userlist).map((user)=>{
